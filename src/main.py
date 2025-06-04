@@ -1,7 +1,7 @@
 import os
 import shutil
 import logging
-from utils import extract_title, generate_page
+from utils import generate_page
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
