@@ -76,10 +76,7 @@ def block_to_block_type(block):
     return BlockType.PARAGRAPH
     
 def markdown_to_html_node(markdown):
-    """
-    Convert a Markdown document into a single parent HTMLNode (div) containing
-    child HTMLNodes for each block, with inline Markdown parsed for non-code blocks.
-    """
+
     blocks = markdown_to_blocks(markdown)
     children = []
 

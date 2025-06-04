@@ -2,7 +2,6 @@ from textnode import TextNode, TextType
 
 class HTMLNode(object):
 
-
     def __init__(self=None, tag=None, value=None, children=None, props=None):
 
         self.tag = tag
@@ -23,17 +22,28 @@ class HTMLNode(object):
         
 class LeafNode(HTMLNode):
     def __init__(self, tag, value, props=None):
-        if value is None:
+        if value is None and tag != "img":
             raise ValueError
         super().__init__(tag=tag, value=value, children=None, props=props)
         self.children = None
     
     def to_html(self):
-        if self.tag is None:
+        if self.tag == "img":
+            if self.props is None or "src" not in self.props:
+                raise ValueError("img tag must have a 'src' prop")
+            props_str = self.props_to_html()
+            props_str = f" {props_str}" if props_str else ""
+            return f"<{self.tag}{props_str} />"
+        
+        elif self.tag is None:
             return self.value
-        props_str = self.props_to_html()
-        props_str = f" {props_str}" if props_str else ""
-        return f"<{self.tag}{props_str}>{self.value}</{self.tag}>"
+        
+        else:
+            if self.value is None:
+                raise ValueError("value cannot be None for non-img tags")
+            props_str = self.props_to_html()
+            props_str = f" {props_str}" if props_str else ""
+            return f"<{self.tag}{props_str}>{self.value}</{self.tag}>"
     
 class ParentNode(HTMLNode):
     def __init__(self, tag, children, props=None):
