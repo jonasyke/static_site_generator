@@ -1,6 +1,7 @@
 import re
 import os
 import logging
+from pathlib import Path
 from block_markdown import markdown_to_html_node
 
 # Configure logging
@@ -35,4 +36,29 @@ def generate_page(from_path, template_path, dest_path):
     with open(dest_path, 'w', encoding='utf-8') as f:
         f.write(final_content)
     logging.info(f"Generated page at {dest_path}")
+
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, root_content_path=None):
+    """
+    Recursively crawl the content directory and generate HTML files from Markdown using the template.
+    Relative paths are always calculated from the top-level root_content_path.
+    """
+    content_path = Path(dir_path_content)
+    dest_path = Path(dest_dir_path)
+
+    if root_content_path is None:
+        root_content_path = content_path
+
+    for entry in os.listdir(content_path):
+        entry_path = content_path / entry
+
+        if entry_path.is_file() and entry_path.suffix == '.md':
+            # Compute relative path from the root
+            relative_path = entry_path.relative_to(root_content_path)
+            dest_file_path = dest_path / relative_path.with_suffix('.html')
+            dest_file_path.parent.mkdir(parents=True, exist_ok=True)
+            generate_page(entry_path, template_path, dest_file_path)
+
+        elif entry_path.is_dir():
+            # Recurse with the same root
+            generate_pages_recursive(entry_path, template_path, dest_dir_path, root_content_path)
 

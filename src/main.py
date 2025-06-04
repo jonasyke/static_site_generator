@@ -1,7 +1,7 @@
 import os
 import shutil
 import logging
-from utils import generate_page
+from utils import generate_pages_recursive
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -36,12 +36,8 @@ def main():
     copy_directory(static_dir, public_dir)
     logging.info("Directory copy completed successfully.")
 
-    # Generate a page from content/index.md using templates.html and write it to public/index.html
-    generate_page(
-        from_path="content/index.md",
-        template_path="template.html",
-        dest_path=os.path.join(public_dir, "index.html")
-    )
+    
+    generate_pages_recursive(dir_path_content="content", template_path="template.html", dest_dir_path="public")
 
 
 
