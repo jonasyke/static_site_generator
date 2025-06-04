@@ -26,8 +26,6 @@ def generate_page(from_path, template_path, dest_path):
     html_node = markdown_to_html_node(markdown_content)
     html_content = html_node.to_html()
     
-    print(f"Generated HTML content: {html_content[:200]}...")  # First 200 chars
-
     title = extract_title(markdown_content)
     
     final_content = template_content.replace('{{ Title }}', title).replace('{{ Content }}', html_content)
@@ -38,4 +36,3 @@ def generate_page(from_path, template_path, dest_path):
         f.write(final_content)
     logging.info(f"Generated page at {dest_path}")
 
-generate_page("content/index.md", "template.html", "public/index.html")

@@ -1,6 +1,7 @@
 import os
 import shutil
 import logging
+from utils import extract_title, generate_page
 
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
@@ -34,6 +35,16 @@ def main():
     
     copy_directory(static_dir, public_dir)
     logging.info("Directory copy completed successfully.")
+
+    # Generate a page from content/index.md using templates.html and write it to public/index.html
+    generate_page(
+        from_path="content/index.md",
+        template_path="template.html",
+        dest_path=os.path.join(public_dir, "index.html")
+    )
+
+
+
 
 
 if __name__ == "__main__":
