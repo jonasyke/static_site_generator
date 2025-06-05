@@ -4,13 +4,15 @@ import shutil
 import logging
 from utils import generate_pages_recursive
 
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s')
 
 def copy_directory(src, dst):
     if os.path.exists(dst):
         shutil.rmtree(dst)
         logging.info(f"Deleted existing directory: {dst}")
-    os.makedirs(dst)
+
+    os.mkdir(dst)
     logging.info(f"Created directory: {dst}")
 
     for item in os.listdir(src):
@@ -24,11 +26,12 @@ def copy_directory(src, dst):
             copy_directory(src_path, dst_path)
 
 def main():
-    static_dir = "static"
-    doc_dir = "docs"
-    # Set basepath for GitHub Pages; use '/' for local testing, '/static_site_generator/' for deployment
-    basepath = sys.argv[1] if len(sys.argv) > 1 else "/static_site_generator/"
 
+    static_dir = "static"
+    public_dir = "public"
+    doc_dir = "docs"
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+    
     if not os.path.exists(static_dir):
         logging.error(f"Source directory {static_dir} does not exist.")
         return
@@ -36,13 +39,12 @@ def main():
     copy_directory(static_dir, doc_dir)
     logging.info("Directory copy completed successfully.")
 
-    generate_pages_recursive(
-        dir_path_content="content",
-        template_path="template.html",
-        dest_dir_path=doc_dir,
-        root_content_path=None,
-        basepath=basepath.rstrip('/')  # Ensure no trailing slash for consistency
-    )
+    
+    generate_pages_recursive(dir_path_content="content", template_path="template.html", dest_dir_path="docs", root_content_path=None, basepath=basepath)
+
+
+
+
 
 if __name__ == "__main__":
     main()
