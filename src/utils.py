@@ -14,7 +14,7 @@ def extract_title(markdown):
         return match.group(1).strip()
     raise ValueError("No h1 header found in markdown")
 
-def generate_page(from_path, template_path, dest_path):
+def generate_page(from_path, template_path, dest_path, basepath):
     """Generate an HTML page from a Markdown file using a template."""
     logging.info(f"Generating page from {from_path} to {dest_path} using {template_path}")
     
@@ -30,6 +30,10 @@ def generate_page(from_path, template_path, dest_path):
     title = extract_title(markdown_content)
     
     final_content = template_content.replace('{{ Title }}', title).replace('{{ Content }}', html_content)
+    final_content = final_content.replace('href="/', f'href="{basepath}')
+    final_content = final_content.replace("href='/", f"href='{basepath}")
+    final_content = final_content.replace('src="/', f'src="{basepath}')
+    final_content = final_content.replace("src='/", f"src='{basepath}")
     
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     
@@ -37,7 +41,7 @@ def generate_page(from_path, template_path, dest_path):
         f.write(final_content)
     logging.info(f"Generated page at {dest_path}")
 
-def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, root_content_path=None):
+def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, root_content_path=None, basepath='/'):
     """
     Recursively crawl the content directory and generate HTML files from Markdown using the template.
     Relative paths are always calculated from the top-level root_content_path.
@@ -56,7 +60,7 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, roo
             relative_path = entry_path.relative_to(root_content_path)
             dest_file_path = dest_path / relative_path.with_suffix('.html')
             dest_file_path.parent.mkdir(parents=True, exist_ok=True)
-            generate_page(entry_path, template_path, dest_file_path)
+            generate_page(entry_path, template_path, dest_file_path, basepath)
 
         elif entry_path.is_dir():
             # Recurse with the same root

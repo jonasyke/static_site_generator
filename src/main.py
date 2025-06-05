@@ -1,4 +1,5 @@
 import os
+import sys
 import shutil
 import logging
 from utils import generate_pages_recursive
@@ -28,16 +29,18 @@ def main():
 
     static_dir = "static"
     public_dir = "public"
-
+    doc_dir = "docs"
+    basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
+    
     if not os.path.exists(static_dir):
         logging.error(f"Source directory {static_dir} does not exist.")
         return
     
-    copy_directory(static_dir, public_dir)
+    copy_directory(static_dir, doc_dir)
     logging.info("Directory copy completed successfully.")
 
     
-    generate_pages_recursive(dir_path_content="content", template_path="template.html", dest_dir_path="public")
+    generate_pages_recursive(dir_path_content="content", template_path="template.html", dest_dir_path="docs", root_content_path=None, basepath=basepath)
 
 
 
