@@ -29,11 +29,19 @@ def generate_page(from_path, template_path, dest_path, basepath):
     
     title = extract_title(markdown_content)
     
+    # Replace placeholders
     final_content = template_content.replace('{{ Title }}', title).replace('{{ Content }}', html_content)
-    final_content = final_content.replace('href="/', f'href="{basepath}')
-    final_content = final_content.replace("href='/", f"href='{basepath}")
-    final_content = final_content.replace('src="/', f'src="{basepath}')
-    final_content = final_content.replace("src='/", f"src='{basepath}")
+    
+    # Fix paths: handle both absolute (/path) and relative (path) URLs
+    # Ensure basepath doesn't have leading/trailing slashes for consistency
+    basepath = basepath.strip('/')
+    if basepath:
+        # Replace absolute paths (e.g., href="/about" or href='/about')
+        final_content = re.sub(r'href=["\']/([^"\']*)["\']', f'href="/{basepath}/\\1"', final_content)
+        final_content = re.sub(r'src=["\']/([^"\']*)["\']', f'src="/{basepath}/\\1"', final_content)
+        # Replace relative paths (e.g., href="about" or src="images/pic.jpg")
+        final_content = re.sub(r'href=["\']((?!http[s]?://)[^"\']+)["\']', f'href="/{basepath}/\\1"', final_content)
+        final_content = re.sub(r'src=["\']((?!http[s]?://)[^"\']+)["\']', f'src="/{basepath}/\\1"', final_content)
     
     os.makedirs(os.path.dirname(dest_path), exist_ok=True)
     
@@ -63,6 +71,6 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, roo
             generate_page(entry_path, template_path, dest_file_path, basepath)
 
         elif entry_path.is_dir():
-            # Recurse with the same root
-            generate_pages_recursive(entry_path, template_path, dest_dir_path, root_content_path)
+            # Recurse with the same root and basepath
+            generate_pages_recursive(entry_path, template_path, dest_dir_path, root_content_path, basepath)
 
