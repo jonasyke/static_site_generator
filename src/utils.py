@@ -40,6 +40,7 @@ def generate_page(from_path, template_path, dest_path, basepath):
     with open(dest_path, 'w', encoding='utf-8') as f:
         f.write(final_content)
     logging.info(f"Generated page at {dest_path}")
+    logging.info(f"Using basepath: '{basepath}'")
 
 def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, root_content_path=None, basepath='/'):
     """
@@ -64,5 +65,5 @@ def generate_pages_recursive(dir_path_content, template_path, dest_dir_path, roo
 
         elif entry_path.is_dir():
             # Recurse with the same root
-            generate_pages_recursive(entry_path, template_path, dest_dir_path, root_content_path)
+            generate_pages_recursive(entry_path, template_path, dest_dir_path, root_content_path, basepath)
 

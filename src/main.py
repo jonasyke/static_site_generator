@@ -29,9 +29,12 @@ def main():
 
     static_dir = "static"
     doc_dir = "docs"
+    # When setting basepath
     basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
-    if not basepath.endswith('/'):
-        basepath += '/'
+    if not basepath.startswith("/"):
+        basepath = "/" + basepath
+    if not basepath.endswith("/"):
+        basepath = basepath + "/"
 
     if not os.path.exists(static_dir):
         logging.error(f"Source directory {static_dir} does not exist.")
@@ -39,8 +42,9 @@ def main():
     
     copy_directory(static_dir, doc_dir)
     logging.info("Directory copy completed successfully.")
+    logging.info(f"Using basepath: '{basepath}'")
 
-    
+
     generate_pages_recursive(dir_path_content="content", template_path="template.html", dest_dir_path="docs", root_content_path=None, basepath=basepath)
 
 
