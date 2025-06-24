@@ -28,10 +28,11 @@ def copy_directory(src, dst):
 def main():
 
     static_dir = "static"
-    public_dir = "public"
     doc_dir = "docs"
     basepath = sys.argv[1] if len(sys.argv) > 1 else "/"
-    
+    if not basepath.endswith('/'):
+        basepath += '/'
+
     if not os.path.exists(static_dir):
         logging.error(f"Source directory {static_dir} does not exist.")
         return
